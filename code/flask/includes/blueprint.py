@@ -11,6 +11,7 @@ import api.spotify as spotify
 import hashlib
 
 landing_page = Blueprint('landing_page', __name__, template_folder='templates')
+verify_page = Blueprint('verify_page', __name__, template_folder='templates')
 login_page = Blueprint('login_page', __name__, template_folder='templates')
 logout_page = Blueprint('logout_page', __name__, template_folder='templates')
 userauth_page = Blueprint('userauth_page', __name__, template_folder='templates')
@@ -30,11 +31,8 @@ spotify_callback = Blueprint('spotify_callback', __name__, template_folder='temp
 spotify_remove = Blueprint('spotify_remove', __name__, template_folder='templates')
 profile_page_password = Blueprint('profile_page_password', __name__, template_folder='templates')
 profile_page_delete_acc = Blueprint('profile_page_delete_acc', __name__, template_folder='templates')
-# spotify_playlist = Blueprint('spotify_playlist', __name__, template_folder='templates')
-# spotify_songs = Blueprint('spotify_songs', __name__, template_folder='templates')
-# spotify_add_pl = Blueprint('spotify_add_pl', __name__, template_folder='templates')
-# spotify_add_sg = Blueprint('spotify_add_sg', __name__, template_folder='templates')
-# spotify_search = Blueprint('spotify_search', __name__, template_folder='templates')
+youtube_oauth = Blueprint('youtube_oauth', __name__, template_folder='templates')
+youtube_callback = Blueprint('youtube_callback', __name__, template_folder='templates')
 
 @landing_page.route('/')
 @landing_page.route('/landing')
@@ -55,6 +53,10 @@ def landing():
         # resp = make_response(render_template('landing.html', title='Welcome, first-time visitor - PlaySync', visitor_status="New Visitor"))
         # resp.set_cookie('visited', '1')
         # return resp
+
+@landing_page.route('/google083b603006fd3547.html')
+def googleVerify():
+    return render_template('google083b603006fd3547.html')
 
 @login_page.route('/login')
 def login():
@@ -430,27 +432,12 @@ def spotifyRemove():
     remove_spotify_auth(user)
     return spotify.sign_out(user)
     
-# @spotify_playlist.route('/spotifyPlaylist')
-# def getPlaylists():
-#     user = request.cookies.get('user').split(':')[1]
-#     return playlists(user)
+@youtube_oauth.route('/ytoauth')
+def ytoauth():
+    user = request.cookies.get('user').split(':')[1]
+    return youtubeOAuth.authorize_yt(user)
 
-# @spotify_songs.route('/spotifySongs/<pl_id>')
-# def spotifySongs(pl_id):
-#     user = request.cookies.get('user').split(':')[1]
-#     return songs(user, pl_id)
-
-# @spotify_search.route('/spotifySearch/<artist>/<track>')
-# def searchSong(artist, track):
-#     user = request.cookies.get('user').split(':')[1]
-#     return search_song(user, artist, track)
-    
-# @spotify_add_pl.route('/spotifyAddPl/<name>')
-# def spotifyAddPl(name):
-#     user = request.cookies.get('user').split(':')[1]
-#     return add_playlist(user, name)
-
-# @spotify_add_sg.route('/spotifyAddSg/<pl_id>/<artist>/<track>')
-# def spotifyAddSg(pl_id, artist, track):
-#     user = request.cookies.get('user').split(':')[1]
-#     return add_song(user, pl_id, artist, track)
+@youtube_callback.route('/youtubecallback')
+def youtubecallback():
+    user = request.cookies.get('user').split(':')[1]
+    return oauth2callback(user)

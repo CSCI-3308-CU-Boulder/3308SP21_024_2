@@ -9,6 +9,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 Session(app)
 app.register_blueprint(landing_page)
+app.register_blueprint(verify_page)
 app.register_blueprint(login_page)
 app.register_blueprint(userauth_page)
 app.register_blueprint(logout_page)
@@ -24,20 +25,11 @@ app.register_blueprint(youtube_auth)
 app.register_blueprint(update_email)
 app.register_blueprint(spotify_api)
 app.register_blueprint(spotify_auth)
-# app.register_blueprint(spotify_playlist)
 app.register_blueprint(spotify_callback)
 app.register_blueprint(spotify_remove)
 app.register_blueprint(profile_page_password)
 app.register_blueprint(profile_page_delete_acc)
-# app.register_blueprint(spotify_songs)
-# app.register_blueprint(spotify_add_pl)
-# app.register_blueprint(spotify_add_sg)
-# app.register_blueprint(spotify_search)
-
-
-
-# @app.route('/')
-# def index():
-#     return 'Web App with Python Flask!'
+app.register_blueprint(youtube_oauth)
+app.register_blueprint(youtube_callback)
 
 app.run(host='127.0.0.1', port=81)
