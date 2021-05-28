@@ -37,8 +37,6 @@ def authorize_yt():
     flask.session['state'] = state
     return flask.redirect(authorization_url)
 
-    return flask.redirect(authorization_url)
-
 def oauth2callback():
     state = flask.session['state']
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
