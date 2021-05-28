@@ -435,7 +435,7 @@ def spotifyRemove():
     
 @youtube_oauth.route('/ytoauth')
 def ytoauth():
-    return yt.authorize_user()
+    return yt.authorize_yt()
     # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     #   CLIENT_SECRETS_FILE, scopes=SCOPES)
     # flow.redirect_uri = 'https://playsync.me/ytcallback'

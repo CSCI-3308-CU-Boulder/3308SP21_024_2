@@ -20,7 +20,6 @@ CLIENT_SECRETS_FILE = "api/client_secret.json"
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
-app.secret_key = os.urandom(24)
 
 def authorize_yt():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -38,7 +37,7 @@ def authorize_yt():
     flask.session['state'] = state
     return flask.redirect(authorization_url)
 
-  return flask.redirect(authorization_url)
+    return flask.redirect(authorization_url)
 
 def oauth2callback():
     state = flask.session['state']
@@ -58,7 +57,7 @@ def oauth2callback():
 
 def ytotest():
     if 'credentials' not in flask.session:
-      return flask.redirect('ytoauth')
+        return flask.redirect('ytoauth')
     # Load the credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
       **flask.session['credentials'])
@@ -73,7 +72,7 @@ def channels_list_by_username(client, **kwargs):
         **kwargs
     ).execute()
 
-  return flask.jsonify(**response)
+    return flask.jsonify(**response)
 
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
