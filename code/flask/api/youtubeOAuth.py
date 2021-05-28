@@ -1,5 +1,6 @@
 import os
 import flask
+import pickle
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -15,11 +16,6 @@ if not os.path.exists(caches_folder):
     
 def session_cache_path(user):
     return caches_folder + user
-
-CLIENT_SECRETS_FILE = "api/client_secret.json"
-SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-API_SERVICE_NAME = 'youtube'
-API_VERSION = 'v3'
 
 def authorize_yt():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -37,7 +33,7 @@ def authorize_yt():
     flask.session['state'] = state
     return flask.redirect(authorization_url)
 
-def oauth2callback():
+def oauth2callback(user):
     state = flask.session['state']
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
       CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
@@ -51,6 +47,10 @@ def oauth2callback():
     #     incorporating this code into your real app.
     credentials = flow.credentials
     flask.session['credentials'] = credentials_to_dict(credentials)
+    credentials = credentials_to_dict(credentials)
+    user = session_cache_path(user)
+    with open('user.pickle', 'wb') as handle:
+      pickle.dump(credentials, handle)
     return flask.redirect('/profile')
 
 def ytotest():
@@ -79,3 +79,23 @@ def credentials_to_dict(credentials):
           'client_id': credentials.client_id,
           'client_secret': credentials.client_secret,
           'scopes': credentials.scopes}
+
+def ytotest2():
+    if 'credentials' not in flask.session:
+        return flask.redirect('ytoauth')
+    # Load the credentials from the session.
+    credentials = google.oauth2.credentials.Credentials(
+      **flask.session['credentials'])
+
+    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, SCOPES)
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    request = youtube.playlists().list(
+        part="snippet,contentDetails",
+        maxResults=25,
+        mine=True,
+    )
+    response = request.execute()
+    return flask.jsonify(response)
