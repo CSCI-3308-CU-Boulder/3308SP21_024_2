@@ -31,5 +31,6 @@ app.register_blueprint(profile_page_password)
 app.register_blueprint(profile_page_delete_acc)
 app.register_blueprint(youtube_oauth)
 app.register_blueprint(youtube_callback)
+app.register_blueprint(yto)
 
 app.run(host='127.0.0.1', port=81)

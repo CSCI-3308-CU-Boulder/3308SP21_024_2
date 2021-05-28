@@ -6,8 +6,8 @@ from includes.userauth import *
 from includes.api_auth import *
 from includes.tasker import *
 from includes.userprofile import *
-# from api.spotify import get_spotify, playlists, callback, auth_spotify, get_name, sign_out, songs, add_playlist, add_song, search_song
 import api.spotify as spotify
+import api.youtubeOAuth as yt
 import hashlib
 
 landing_page = Blueprint('landing_page', __name__, template_folder='templates')
@@ -33,6 +33,7 @@ profile_page_password = Blueprint('profile_page_password', __name__, template_fo
 profile_page_delete_acc = Blueprint('profile_page_delete_acc', __name__, template_folder='templates')
 youtube_oauth = Blueprint('youtube_oauth', __name__, template_folder='templates')
 youtube_callback = Blueprint('youtube_callback', __name__, template_folder='templates')
+yto = Blueprint('yto', __name__, template_folder='templates')
 
 @landing_page.route('/')
 @landing_page.route('/landing')
@@ -434,10 +435,69 @@ def spotifyRemove():
     
 @youtube_oauth.route('/ytoauth')
 def ytoauth():
-    user = request.cookies.get('user').split(':')[1]
-    return youtubeOAuth.authorize_yt(user)
+    return yt.authorize_user()
+    # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    #   CLIENT_SECRETS_FILE, scopes=SCOPES)
+    # flow.redirect_uri = 'https://playsync.me/ytcallback'
+    # authorization_url, state = flow.authorization_url(
+    #   # This parameter enables offline access which gives your application
+    #   # both an access and refresh token.
+    #   access_type='offline',
+    #   # This parameter enables incremental auth.
+    #   include_granted_scopes='false'
+    # )
+    # # Store the state in the session so that the callback can verify that
+    # # the authorization server response.
+    # flask.session['state'] = state
+    # return flask.redirect(authorization_url)
 
-@youtube_callback.route('/youtubecallback')
-def youtubecallback():
-    user = request.cookies.get('user').split(':')[1]
-    return oauth2callback(user)
+
+@youtube_oauth.route('/ytcallback')
+def ytcallback():
+    return yt.oauth2callback()
+    # state = flask.session['state']
+    # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    #   CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    # flow.redirect_uri = 'https://playsync.me/ytcallback'
+    # authorization_response = flask.request.url
+    # authorization_response = authorization_response.replace('http://127.0.0.1:81', 'https://playsync.me')
+    # flow.fetch_token(authorization_response=authorization_response)
+    # # Store the credentials in the session.
+    # # ACTION ITEM for developers:
+    # #     Store user's access and refresh tokens in your data store if
+    # #     incorporating this code into your real app.
+    # credentials = flow.credentials
+    # flask.session['credentials'] = credentials_to_dict(credentials)
+    # return flask.redirect('/profile')
+
+@yto.route('/ytotest')
+def ytotest():
+    return yt.ytotest()
+    # if 'credentials' not in flask.session:
+    #   return flask.redirect('ytoauth')
+
+    # # Load the credentials from the session.
+    # credentials = google.oauth2.credentials.Credentials(
+    #   **flask.session['credentials'])
+
+    # client = googleapiclient.discovery.build(
+    #   API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    # return channels_list_by_username(client,
+    #   part='snippet,contentDetails,statistics',
+    #   forUsername='GoogleDevelopers')
+
+# def channels_list_by_username(client, **kwargs):
+#     response = client.channels().list(
+#         **kwargs
+#     ).execute()
+
+#   return flask.jsonify(**response)
+
+# def credentials_to_dict(credentials):
+#     return {'token': credentials.token,
+#           'refresh_token': credentials.refresh_token,
+#           'token_uri': credentials.token_uri,
+#           'client_id': credentials.client_id,
+#           'client_secret': credentials.client_secret,
+#           'scopes': credentials.scopes}
